@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
 import Entries from "./components/Entries.js";
 import NewPersonForm from "./components/NewPersonForm.js";
-import Filter from "./components/Filter.js"
+import Filter from "./components/Filter.js";
 
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      number: "0700-123123"
-    },
-    {
-      name: 'Arto Artila',
-      number: "0700-123123"
-    },
-    {
-      name: 'Jarno Korhonen',
-      number: "0700-123123"
-    }
-  ]);
+  const [ persons, setPersons] = useState([]);
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filter, setFilter ] = useState('');
+
+  const hook = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data);
+      });
+  };
+  useEffect(hook, []);
 
 
   const addPerson = (event) => {
@@ -65,7 +62,7 @@ const App = () => {
 
   // IMPORTANT: don't define components inside App !!
   // The state will be messed up
-  // The component will be redefined every time App rerenders.
+  // The component would be redefined every time App rerenders.
   // one symptom: text field will lose focus after every typed letter
 
   return (
