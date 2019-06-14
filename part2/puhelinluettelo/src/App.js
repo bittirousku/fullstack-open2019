@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Entries from "./components/Entries.js";
 import NewPersonForm from "./components/NewPersonForm.js";
 import Filter from "./components/Filter.js";
+import personService from './services/persons.js';
 
 
 const App = () => {
@@ -13,10 +14,10 @@ const App = () => {
   const [ filter, setFilter ] = useState('');
 
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
+    personService
+      .getAll()
+      .then(initialPeople => {
+        setPersons(initialPeople);
       });
   };
   useEffect(hook, []);
@@ -34,10 +35,13 @@ const App = () => {
       "name": newName,
       "number": newNumber
     };
-    console.log(personObject);
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
   };
 
   const handleNewName = (event) => {
