@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+import Footer from "./components/Footer.js";
 import Note from "./components/Note.js";
+import Notification from "./components/Notification.js";
 import noteService from './services/notes';
 
 
@@ -8,6 +10,7 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("Error placeholder");
 
   const hook = () => {
     noteService
@@ -54,11 +57,14 @@ const App = () => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote));
       })
       .catch(error => {
-        alert(
-          `the note '${note.content}' was already deleted from server`
-        )
-        setNotes(notes.filter(n => n.id !== id))
-      })
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
+        );
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+        setNotes(notes.filter(n => n.id !== id));
+      });
   };
 
   const rows = () => notesToShow.map(note =>
@@ -72,6 +78,9 @@ const App = () => {
   return (
     <div>
       <h1>Muistiinpanot</h1>
+
+      <Notification message={errorMessage} />
+
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           näytä {showAll ? 'vain tärkeät' : 'kaikki' }
@@ -84,6 +93,8 @@ const App = () => {
         <input value={newNote} onChange={handleNoteChange}/>
         <button type="submit">tallenna</button>
       </form>
+
+      <Footer/>
     </div>
   );
 };
