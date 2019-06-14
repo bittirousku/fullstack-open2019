@@ -26,9 +26,17 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
     if (persons.some((person) => person.name === newName)) {
-      setNewName("");
-      window.alert(`${newName} on jo puhelinluettelossa`);
-      return;
+      if (window.confirm(`${newName} already has entry, update number?`)) {
+        let person = persons.find((person) => person.name === newName);
+        let newPerson = {...person, number: newNumber}
+        setNewName('');
+        setNewNumber('')
+        return updateNumber(person.id, newPerson);
+      } else {
+        setNewName('');
+        setNewNumber('')
+        return;
+      }
     }
 
     const personObject = {
@@ -53,6 +61,14 @@ const App = () => {
       .deleteEntry(personId)
       .then(() => {
         setPersons(persons.filter(person => person.id !== personId));
+      });
+  };
+
+  const updateNumber = (personId, newPerson) => {
+    personService
+      .update(personId, newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== personId ? person : returnedPerson));
       });
   };
 
