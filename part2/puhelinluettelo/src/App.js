@@ -44,6 +44,18 @@ const App = () => {
       });
   };
 
+  const removePerson = (personId) => {
+    if (!window.confirm(`Really delete entry ${personId}?`)) {
+      return;
+    }
+
+    personService
+      .deleteEntry(personId)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== personId));
+      });
+  };
+
   const handleNewName = (event) => {
     console.log(event.target.value);
     setNewName(event.target.value);
@@ -82,7 +94,7 @@ const App = () => {
         handleNewNumber={handleNewNumber}
       />
       <h2>Numerot</h2>
-      <Entries persons={personsToShow}/>
+      <Entries persons={personsToShow} deleteEntry={removePerson}/>
     </div>
   );
 
