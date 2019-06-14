@@ -25,6 +25,10 @@ const App = () => {
     setFilter(event.target.value.toLowerCase());
   };
 
+  const buttonHandleFilter = (event) => {
+		setFilter(event.target.attributes.country.value.toLowerCase())
+}
+
   const countriesToShow = () => {
     if (!filter) {
       return null
@@ -37,9 +41,9 @@ const App = () => {
 
   return (
     <div>
-      <h2>Hae maata</h2>
+      <h2>Search Country</h2>
       <Filter filter={filter} handleFilter={handleFilter}/>
-      <Countries countries={countriesToShow()}/>
+      <Countries countries={countriesToShow()} buttonHandler={buttonHandleFilter}/>
     </div>
   );
 

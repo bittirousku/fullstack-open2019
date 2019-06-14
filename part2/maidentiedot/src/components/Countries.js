@@ -3,10 +3,14 @@ import React from 'react';
 import Country from "./Country.js";
 
 
-const Countries = ({countries}) => {
+const Countries = ({countries, buttonHandler}) => {
+
   const rows = () => (
     countries.map(country =>
-      <div key={country.name}> {country.name}</div>
+      <div key={country.name}>
+        {country.name}
+        <button onClick={buttonHandler} country={country.name}>show</button>
+      </div>
     )
   );
 

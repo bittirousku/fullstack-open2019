@@ -7,7 +7,6 @@ const Country = ({country}) => {
     )
   );
 
-  // debugger;
   return (
     <>
       <h2>{country.name}</h2>
