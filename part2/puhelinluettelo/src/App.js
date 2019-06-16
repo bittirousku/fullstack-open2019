@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 import Entries from "./components/Entries.js";
 import NewPersonForm from "./components/NewPersonForm.js";
+import Notification from "./components/Notification.js";
 import Filter from "./components/Filter.js";
 import personService from './services/persons.js';
 
@@ -12,6 +13,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filter, setFilter ] = useState('');
+  const [ message, setMessage ] = useState(null);
 
   const hook = () => {
     personService
@@ -28,13 +30,13 @@ const App = () => {
     if (persons.some((person) => person.name === newName)) {
       if (window.confirm(`${newName} already has entry, update number?`)) {
         let person = persons.find((person) => person.name === newName);
-        let newPerson = {...person, number: newNumber}
+        let newPerson = {...person, number: newNumber};
         setNewName('');
-        setNewNumber('')
+        setNewNumber('');
         return updateNumber(person.id, newPerson);
       } else {
         setNewName('');
-        setNewNumber('')
+        setNewNumber('');
         return;
       }
     }
@@ -50,10 +52,16 @@ const App = () => {
         setNewName('');
         setNewNumber('');
       });
+    setMessage(`Successfully added ${newName}`);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+
   };
 
   const removePerson = (personId) => {
-    if (!window.confirm(`Really delete entry ${personId}?`)) {
+    let person = persons.find(person => person.id === personId);
+    if (!window.confirm(`Really delete entry ${person.name}?`)) {
       return;
     }
 
@@ -62,6 +70,10 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter(person => person.id !== personId));
       });
+    setMessage(`Successfully removed ${person.name}`);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
   };
 
   const updateNumber = (personId, newPerson) => {
@@ -70,6 +82,10 @@ const App = () => {
       .then(returnedPerson => {
         setPersons(persons.map(person => person.id !== personId ? person : returnedPerson));
       });
+    setMessage(`Successfully updated ${newPerson.name}`);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
   };
 
   const handleNewName = (event) => {
@@ -100,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Puhelinluettelo</h2>
+      <Notification message={message} />
       <Filter filter={filter} handleFilter={handleFilter}/>
       <h2>Lisää uusi numero</h2>
       <NewPersonForm
