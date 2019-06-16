@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Entries from "./components/Entries.js";
 import NewPersonForm from "./components/NewPersonForm.js";
 import Notification from "./components/Notification.js";
+import ErrorMessage from "./components/ErrorMessage.js";
 import Filter from "./components/Filter.js";
 import personService from './services/persons.js';
 
@@ -14,6 +15,7 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('');
   const [ filter, setFilter ] = useState('');
   const [ message, setMessage ] = useState(null);
+  const [ errorMessage, setErrorMessage ] = useState(null);
 
   const hook = () => {
     personService
@@ -69,8 +71,17 @@ const App = () => {
       .deleteEntry(personId)
       .then(() => {
         setPersons(persons.filter(person => person.id !== personId));
+      })
+      .then(() => {
+        messager(`Successfully removed ${person.name}`);
+      })
+      .catch((error) => {
+        setErrorMessage(`Failed: ${person.name} was not found on the server`);
       });
-    setMessage(`Successfully removed ${person.name}`);
+  };
+
+  const messager = (message) => {
+    setMessage(message);
     setTimeout(() => {
       setMessage(null);
     }, 5000);
@@ -81,11 +92,13 @@ const App = () => {
       .update(personId, newPerson)
       .then(returnedPerson => {
         setPersons(persons.map(person => person.id !== personId ? person : returnedPerson));
+      })
+      .then(() => {
+        messager(`Successfully updated ${newPerson.name}`);
+      })
+      .catch((error) => {
+        setErrorMessage(`Failed: ${newPerson.name} was not found on the server`);
       });
-    setMessage(`Successfully updated ${newPerson.name}`);
-    setTimeout(() => {
-      setMessage(null);
-    }, 5000);
   };
 
   const handleNewName = (event) => {
@@ -117,6 +130,8 @@ const App = () => {
     <div>
       <h2>Puhelinluettelo</h2>
       <Notification message={message} />
+      <ErrorMessage errorMessage={errorMessage} />
+
       <Filter filter={filter} handleFilter={handleFilter}/>
       <h2>Lisää uusi numero</h2>
       <NewPersonForm
