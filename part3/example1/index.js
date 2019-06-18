@@ -1,5 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
+
 
 const app = express()
 
@@ -18,6 +20,7 @@ const unknownEndpoint = (request, response) => {
 app.use(bodyParser.json())
 app.use(requestLogger)
 app.use(unknownEndpoint)
+app.use(cors())  // enable serving from 3001 to client on 3000
 
 let notes = [
   {
@@ -99,7 +102,7 @@ app.post('/notes', (request, response) => {
 
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
