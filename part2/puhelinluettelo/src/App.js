@@ -52,12 +52,12 @@ const App = () => {
         setPersons(persons.concat(returnedPerson));
         setNewName('');
         setNewNumber('');
-      });
-    setMessage(`Successfully added ${newName}`);
-    setTimeout(() => {
-      setMessage(null);
-    }, 5000);
-
+        messager(`Successfully added ${newName}`)
+        })
+      .catch(error => {
+        console.log(error)
+        setErrorMessage(error.response.data.error)
+      })
   };
 
   const removePerson = (personId) => {
